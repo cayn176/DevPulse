@@ -1,0 +1,12 @@
+const fs=require('node:fs');
+const path=require('node:path');
+const {spawnSync}=require('node:child_process');
+const root=path.resolve(__dirname,'..');
+const output=path.resolve(process.argv[2]||path.join(root,'preview-dist'));
+const front=path.join(root,'frontend');
+const build=spawnSync(process.execPath,[path.join(front,'node_modules/vite/bin/vite.js'),'build','--mode','preview','--configLoader','runner','--outDir',output],{cwd:front,stdio:'inherit'});
+if(build.status!==0)process.exit(build.status||1);
+fs.copyFileSync(path.join(front,'preview/workspace.js'),path.join(output,'preview-workspace.js'));
+let html=fs.readFileSync(path.join(output,'index.html'),'utf8');
+html=html.replace('</body>', '<style>.preview-label{position:fixed;bottom:0;left:0;right:0;z-index:65;text-align:center;background:#1c3548;color:#e3efff;font:11px/22px system-ui;pointer-events:none}body{padding-bottom:22px}</style><script src="/preview-workspace.js"></script></body>');
+fs.writeFileSync(path.join(output,'index.html'),html);

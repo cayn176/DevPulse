@@ -1,0 +1,33 @@
+import { useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link, useNavigate } from 'react-router-dom'
+import { ArrowUpRight, Code2, FolderOpen, GitBranch, Plus, Search } from 'lucide-react'
+import { Button, Dialog, EmptyPanel, ErrorPanel, Input, PageHeading, Panel } from '../components/Primitives'
+import { ProjectInspector } from '../components/ProjectDetailsDialog'
+import { type LocalProject, chooseFolder, hasFolderPicker, projects } from '../lib/projects'
+
+export function ProjectsPage() {
+  const [inspect,setInspect]=useState<LocalProject|null>(null)
+  const [q, setQ] = useState('')
+  const [language, setLanguage] = useState('')
+  const [mode, setMode] = useState<'open' | 'create' | 'clone' | null>(null)
+  const [name, setName] = useState('')
+  const [path, setPath] = useState('')
+  const [remote, setRemote] = useState('')
+  const [description, setDescription] = useState('')
+  const [pickerError, setPickerError] = useState('')
+  const client = useQueryClient()
+  const navigate = useNavigate()
+  const all = useQuery({ queryKey: ['local-projects'], queryFn: () => projects.list() })
+  const result = all.data?.filter(p => (p.name + ' ' + p.description).toLowerCase().includes(q.toLowerCase()) && (!language || p.language === language))
+  const create = useMutation({ mutationFn: () => projects.create({ name, description, action: mode!, path: mode === 'open' ? path : undefined, remote_url: mode === 'clone' ? remote : undefined }), onSuccess: async value => { await client.invalidateQueries({ queryKey: ['local-projects'] }); setMode(null); navigate('/app/code?project=' + value.id) } })
+  const open = useMutation({ mutationFn: projects.open, onSuccess: value => navigate('/app/code?project=' + value.id) })
+  function dialog(kind: 'open' | 'create' | 'clone') { create.reset(); setName(''); setDescription(''); setPath(''); setRemote(''); setPickerError(''); setMode(kind) }
+  return <div className="page-stack"><PageHeading eyebrow="YOUR DEVELOPMENT ENVIRONMENT" title="Projects" description="Open a local workspace. Every agent, file and change starts with a project." action={<div className="project-actions"><Button onClick={() => dialog('clone')}><GitBranch size={14} />Clone repository</Button><Button onClick={() => dialog('open')}><FolderOpen size={14} />Open folder</Button><Button variant="primary" onClick={() => dialog('create')}><Plus size={14} />New project</Button></div>} />
+    <div className="project-filters"><label className="project-search"><Search size={15} /><Input placeholder="Search projects" value={q} onChange={e => setQ(e.target.value)} /></label><select aria-label="Filter by language" value={language} onChange={e => setLanguage(e.target.value)}><option value="">All languages</option>{[...new Set(all.data?.flatMap(p => p.language ? [p.language] : []) || [])].map(value => <option key={value}>{value}</option>)}</select><span>{result?.length || 0} projects</span></div>
+    {all.isError && <ErrorPanel detail={all.error.message} onRetry={() => all.refetch()} />}{open.isError && <p className="inline-alert">{open.error.message}</p>}
+    {!all.isPending && result?.length === 0 && <EmptyPanel title="Make room for your next project" detail="Create a project, open a folder or clone a GitHub repository to start working." action={<Button onClick={() => dialog('open')}>Open a project folder</Button>} />}
+    {inspect&&<ProjectInspector project={inspect} close={()=>setInspect(null)}/>}<div className="project-grid">{result?.map(project => <Panel className="project-card" key={project.id}><div className="project-card-icon"><Code2 size={21} /></div><div className="project-card-title"><h2><button className="project-inspect" title="Project details" onClick={()=>setInspect(project)}>{project.name}</button></h2><span>{project.framework || project.language || 'Local project'}</span></div><p>{project.description || 'A local workspace for your code and agent sessions.'}</p><code title={project.path}>{project.path}</code><div className="project-card-meta"><span>{project.language || 'Not detected'}</span><small>Opened {new Date(project.last_opened).toLocaleDateString()}</small></div><div className="project-card-footer"><Button size="small" variant="primary" onClick={() => open.mutate(project.id)}>Open workspace <ArrowUpRight size={13} /></Button><Link to={'/app/git?project=' + project.id}><GitBranch size={14} />Git</Link><Link to={'/app/agents?project=' + project.id}>Agents →</Link></div></Panel>)}</div>
+    {mode && <Dialog title={mode === 'open' ? 'Open a project folder' : mode === 'clone' ? 'Clone a GitHub repository' : 'Create a project'} description={mode === 'open' ? 'Explicitly grant DevPulse access to this project folder. Credential files and linked folders remain excluded from the editor.' : 'New projects are stored in the DevPulse workspace directory.'} onClose={() => !create.isPending && setMode(null)} footer={<><Button disabled={create.isPending} onClick={() => setMode(null)}>Cancel</Button><Button variant="primary" loading={create.isPending} disabled={!name.trim() || mode === 'open' && !path.trim() || mode === 'clone' && !remote.trim()} onClick={() => create.mutate()}>{mode === 'open' ? 'Grant access and open' : mode === 'clone' ? 'Clone repository' : 'Create project'}</Button></>}><div className="project-form"><label>Project name<Input value={name} onChange={e => setName(e.target.value)} placeholder="my-project" /></label>{mode === 'open' && <label>Absolute folder path<div className="project-inline-field"><Input value={path} onChange={e => setPath(e.target.value)} placeholder="C:\Projects\my-project" />{hasFolderPicker() && <Button onClick={async () => { try { const selected = await chooseFolder(); if (selected) { setPath(selected); if (!name) setName(selected.split(/[\\/]/).filter(Boolean).at(-1) || '') } } catch { setPickerError('The folder picker could not be opened. Enter a path manually.') } }}>Browse</Button>}</div></label>}{mode === 'clone' && <label>GitHub HTTPS URL<Input value={remote} onChange={e => setRemote(e.target.value)} placeholder="https://github.com/owner/repository" /></label>}<label>Description<Input value={description} onChange={e => setDescription(e.target.value)} placeholder="What are you building?" /></label>{mode === 'clone' && <p>Private repository cloning uses your local Git credential manager. Sign in to Git on this computer first. No credentials should be included in the URL.</p>}{(create.isError || pickerError) && <p className="inline-alert">{create.error?.message || pickerError}</p>}</div></Dialog>}
+  </div>
+}
