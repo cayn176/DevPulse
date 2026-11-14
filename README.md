@@ -4,7 +4,7 @@
 
 **Un workspace desktop per lavorare con progetti locali, agenti AI, GitHub e deployment.** DevPulse 0.3.0 è disponibile per Windows x64. Il backend gira sul PC e conserva le credenziali dei provider cifrate. Puoi iniziare con una cartella locale senza configurare un account.
 
-[Scarica l’installer Windows](https://github.com/cayn176/DevPulse/releases/download/v0.3.0/DevPulse-Setup-0.3.0-x64.exe) · [Pacchetto offline](https://github.com/cayn176/DevPulse/releases/download/v0.3.0/DevPulse-Offline-0.3.0-x64.exe) · [Release e checksum](https://github.com/cayn176/DevPulse/releases/tag/v0.3.0) · [Preview privata nel browser](https://devpulse-workspace-preview.leafyshark257.chatgpt.site)
+[Scarica l’installer Windows](https://github.com/cayn176/DevPulse/releases/download/v0.3.0/DevPulse-Setup-0.3.0-x64.exe) · [Pacchetto offline](https://github.com/cayn176/DevPulse/releases/download/v0.3.0/DevPulse-Offline-0.3.0-x64.exe) · [Versione portatile ZIP](https://github.com/cayn176/DevPulse/releases/download/v0.3.0/DevPulse-Portable-0.3.0-x64.zip) · [Release e checksum](https://github.com/cayn176/DevPulse/releases/tag/v0.3.0) · [Preview privata nel browser](https://devpulse-workspace-preview.leafyshark257.chatgpt.site)
 
 ## Installazione
 
@@ -12,8 +12,9 @@
 2. Il programma scarica da GitHub il pacchetto della versione 0.3.0 e controlla il suo hash SHA-512. In caso di errore interrompe l’installazione.
 3. Si apre la procedura di installazione per il tuo utente Windows. Scegli la cartella di destinazione, completa l’installazione e avvia DevPulse dal menu Start.
 4. Per installare senza Internet, copia sul PC **DevPulse-Offline-0.3.0-x64.exe** ed eseguilo direttamente. I due percorsi installano la stessa applicazione.
+5. Per usare la versione portatile, estrai interamente **DevPulse-Portable-0.3.0-x64.zip** in una cartella dell’utente e apri **DevPulse.exe** nella cartella estratta. Il profilo e i progetti seguono le stesse regole della versione installata.
 
-Gli eseguibili di questa release sono privi di firma Authenticode. Per verificare il download con PowerShell usa `Get-FileHash .\DevPulse-Setup-0.3.0-x64.exe -Algorithm SHA256` e confronta il risultato con `SHA256SUMS.txt` allegato alla release.
+Gli eseguibili di questa release sono privi di firma Authenticode. Un criterio aziendale o Windows Application Control può impedire l’esecuzione di file senza un editore attendibile. Per verificare il download con PowerShell usa `Get-FileHash .\DevPulse-Setup-0.3.0-x64.exe -Algorithm SHA256` e confronta il risultato con `SHA256SUMS.txt` allegato alla release.
 
 ## Il workspace
 
@@ -65,7 +66,7 @@ npm.cmd run desktop:dev -- --smoke-test
 npm.cmd run build:desktop
 ```
 
-La build produce entrambi gli installer e `SHA256SUMS.txt` nella cartella `release`. Il bootstrap incorpora l’URL della versione e l’hash del pacchetto offline. Quando si pubblica una nuova versione, entrambi i file devono provenire dalla stessa build.
+La build produce entrambi gli installer e `SHA256SUMS.txt` nella cartella `release`. Per aggiungere lo ZIP portatile allo stesso manifesto esegui `backend/.venv/Scripts/python.exe scripts/portable.py` dopo la build. Il bootstrap incorpora l’URL della versione e l’hash del pacchetto offline. Quando si pubblica una nuova versione, entrambi i file devono provenire dalla stessa build.
 
 ## Tecnologie
 
