@@ -9,3 +9,7 @@ Le cartelle e le sessioni sono associate al proprietario del workspace. La crono
 L’app richiede la revisione delle azioni di pubblicazione. Disconnettere un’integrazione rimuove l’accesso locale; per revocare un token presso il servizio, usa anche le impostazioni del provider.
 
 Il bootstrap Windows usa HTTPS e un hash SHA-512 incorporato per verificare il pacchetto prima dell’esecuzione. Gli hash SHA-256 pubblicati nella release consentono la verifica manuale. Questa versione non ha un certificato Authenticode.
+
+## Servizio AI gestito
+
+La funzione Vercel legge la chiave OpenAI dai segreti di produzione. L’app desktop invia il token dell’utente al solo endpoint HTTPS del servizio, che lo verifica con GitHub. La chat web conserva il token solo nel campo di input finché la scheda resta aperta. Il service worker memorizza soltanto risorse statiche. Il servizio invia a OpenAI il contesto della richiesta con store disabilitato e salva nel Blob privato i contatori giornalieri per ID GitHub. La chiave del gestore non viene inviata ai client. Dopo la rotazione di un segreto Vercel occorre ridistribuire il servizio.

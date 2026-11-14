@@ -1,5 +1,11 @@
 # Releases
 
+## 0.3.1
+
+- Guide guidate per Codex, Claude e Cursor con verifica del runtime e apertura della chat.
+- DevPulse AI gestito dal server con accesso GitHub e limiti di utilizzo.
+- Preparazione delle versioni firmate e dei pacchetti per Microsoft Store.
+
 ## 0.3.0 — Pulse Relay
 
 Introduces a geometric DevPulse mark, graphite and paper themes, persistent system theme selection, teal and steel accents, responsive layouts and keyboard focus handling for dialogs. The overview includes workspace signals. Tasks now carry due dates, labels and a local change history. Projects have an inspector for metadata, associated sessions and tasks. The activity ledger combines project, agent, workflow, task and deployment events.

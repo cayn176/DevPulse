@@ -21,4 +21,4 @@ export const ai = {
   cursor: (id: string, text: string) => request<AIThread>('/api/ai/threads/' + id + '/cursor', json('POST', { text, confirm_branch_writes: true })),
   cursorSync: (id: string) => request<AIThread>('/api/ai/threads/' + id + '/cursor/sync', json('POST')),
 }
-export const providerNames: Record<string, string> = { workspace: 'Workspace tools', ollama: 'Ollama (local)', openai: 'OpenAI API', anthropic: 'Claude API', codex: 'Codex CLI', 'claude-code': 'Claude Code', cursor: 'Cursor Cloud' }
+export const providerNames: Record<string, string> = { managed: 'DevPulse AI', workspace: 'Workspace tools', ollama: 'Ollama (local)', openai: 'OpenAI API', anthropic: 'Claude API', codex: 'Codex CLI', 'claude-code': 'Claude Code', cursor: 'Cursor Cloud' }

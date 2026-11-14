@@ -17,6 +17,7 @@ from app.models.ai import AIConnection, AIThread
 from app.services.ai import PROVIDERS, safe_path, answer, remote
 from app.services.github import GitHubClient
 from app.api.local_access import local_owner
+from app.services.managed_ai import managed_answer
 from app.services.ai import ollama_models
 from app.services.workspace_tools import BUILTIN_HELP, interpret_command, run_tool
 
@@ -186,12 +187,17 @@ class ChatBody(BaseModel):
 @router.post("/threads/{thread_id}/messages", dependencies=[Depends(require_same_origin)])
 async def chat(thread_id: str, body: ChatBody, request: Request, user: User = Depends(current_user), db: Session = Depends(get_db)):
     row = owned(db, user, thread_id)
-    if body.provider not in {"openai", "anthropic", "ollama", "workspace"}:
+    if body.provider not in {"managed", "openai", "anthropic", "ollama", "workspace"}:
         raise HTTPException(422, "Choose a supported chat provider.")
     key, model = "", ""
     if body.provider in {"openai", "anthropic"}:
         c = connection(db, user, body.provider)
         key, model = decrypt_secret(c.encrypted_key), c.model
+    elif body.provider == "managed":
+        account = db.query(OAuthConnection).filter_by(user_id=user.id).one_or_none()
+        if account is None:
+            raise HTTPException(401, "Collega GitHub per usare DevPulse AI.")
+        key = decrypt_secret(account.encrypted_access_token)
     elif body.provider == "ollama":
         local_owner(request, user)
         model = body.model or settings.ollama_model
@@ -232,7 +238,11 @@ async def chat(thread_id: str, body: ChatBody, request: Request, user: User = De
         history = [{"role": m["role"], "text": m["text"]} for m in row.messages[-12:] if not m.get("tool") and m.get("provider") != "workspace"]
         context = {"repository": row.repository, "base_sha": sha, "paths": [t["path"] for t in tree if t["type"] == "blob"][:2000], "attached_files": files,
                    "history": history, "request": body.text}
-        reply = await answer(body.provider, key, model, json.dumps(context), user.login)
+        prompt = json.dumps(context, ensure_ascii=False)
+        if body.provider == "managed":
+            reply = await managed_answer(key, prompt)
+        else:
+            reply = await answer(body.provider, key, model, prompt, user.login)
         db.refresh(row)
         if reply.tool:
             result = await run_tool(reply.tool, request=request, user=user, db=db, repository=row.repository,

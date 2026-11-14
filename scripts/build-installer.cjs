@@ -3,6 +3,7 @@ const path=require('node:path');
 const crypto=require('node:crypto');
 const {spawnSync}=require('node:child_process');
 const root=path.resolve(__dirname,'..');
+const {signWindows}=require('./windows-sign.cjs');
 const {version}=require(path.join(root,'package.json'));
 const {getMakeNsisPath,getNsisPluginsPath}=require('app-builder-lib/out/toolsets/windows');
 const file='DevPulse-Offline-'+version+'-x64.exe';
@@ -15,6 +16,7 @@ async function build(){
  const plugins=path.join(await getNsisPluginsPath(),'x86-unicode');
  const buildEnv={...process.env,...nsis.env};
  const appDir=path.join(release,'win-unpacked');
+ signWindows(path.join(appDir,'DevPulse.exe'));
  const manifest=path.join(release,'uninstall-files.nsh');
  const directives=[];
  function walk(rel){
@@ -27,13 +29,15 @@ async function build(){
  }
  walk('');
  fs.writeFileSync(manifest,'\uFEFF'+directives.join('\r\n'));
- const offlineArgs=['/V2','/DVERSION='+version,'/DICON='+path.join(root,'desktop/assets/icon.ico'),'/DAPP_DIR='+appDir,'/DUNINSTALL_LIST='+manifest,'/DOFFLINE_OUTPUT='+offline,path.join(__dirname,'installer/offline.nsi')];
+ const offlineArgs=['/V2',...(process.env.DEVPULSE_SIGN_CERT_SHA1?['/DSIGN_COMMAND='+'"'+process.execPath+'" "'+path.join(__dirname,'windows-sign.cjs')+'"']:[]),'/DVERSION='+version,'/DICON='+path.join(root,'desktop/assets/icon.ico'),'/DAPP_DIR='+appDir,'/DUNINSTALL_LIST='+manifest,'/DOFFLINE_OUTPUT='+offline,path.join(__dirname,'installer/offline.nsi')];
  const compiled=spawnSync(compiler,offlineArgs,{stdio:'inherit',windowsHide:true,env:buildEnv});if(compiled.status!==0)process.exit(compiled.status||1);
+ signWindows(offline);
  const hash=crypto.createHash('sha512');
  for await (const chunk of fs.createReadStream(offline))hash.update(chunk);
  const defs={VERSION:version,ICON:path.join(root,'desktop/assets/icon.ico'),OUTPUT:output,CHECKSUM:hash.digest('hex').toUpperCase(),DOWNLOAD_URL:'https://github.com/cayn176/DevPulse/releases/download/v'+version+'/'+file,PLUGIN_DIRECTORY:plugins,UTIL_INCLUDE:path.join(root,'node_modules/app-builder-lib/templates/nsis/include/StdUtils.nsh')};
  const args=['/V2',...Object.entries(defs).map(([k,v])=>'/D'+k+'='+v),path.join(__dirname,'installer/bootstrap.nsi')];
  const result=spawnSync(compiler,args,{stdio:'inherit',windowsHide:true,env:buildEnv});if(result.status!==0)process.exit(result.status||1);
+ signWindows(output);
  const sums=[];
  for(const artifact of [output,offline]){
   const digest=crypto.createHash('sha256');

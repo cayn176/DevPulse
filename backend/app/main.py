@@ -30,7 +30,7 @@ async def lifespan(_app: FastAPI):
 
 app = FastAPI(
     title="DevPulse API",
-    version="0.3.0",
+    version="0.3.1",
     description="A GitHub-connected developer workspace.",
     lifespan=lifespan,
 )

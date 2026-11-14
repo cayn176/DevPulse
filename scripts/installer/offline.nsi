@@ -1,6 +1,9 @@
 Unicode true
 !include MUI2.nsh
 !include LogicLib.nsh
+!ifdef SIGN_COMMAND
+  !uninstfinalize '${SIGN_COMMAND} "%1"'
+!endif
 Name "DevPulse ${VERSION}"
 OutFile "${OFFLINE_OUTPUT}"
 InstallDir "$LOCALAPPDATA\Programs\DevPulse"

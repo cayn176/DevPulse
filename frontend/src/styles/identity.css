@@ -92,3 +92,12 @@ body,.native-shell{font-family:var(--font-sans);color:var(--text-primary)}
 .signal-event{display:grid;grid-template-columns:90px minmax(0,1fr) auto auto;align-items:center;gap:16px;border-top:1px solid var(--border-soft);padding:12px 0;font-size:13px}.signal-event time,.signal-event small{font:11px var(--font-mono);color:var(--text-muted)}
 .settings-sections{display:flex;gap:8px;flex-wrap:wrap}.settings-sections a{padding:6px 10px;background:var(--surface);border:1px solid var(--border-soft);border-radius:4px;font-size:12px}.project-inspect{background:transparent;border:0;color:var(--text-primary);font:inherit;text-align:left;cursor:pointer}.project-inspect:hover{color:var(--accent)}
 @media(max-width:760px){.signal-event{grid-template-columns:65px 1fr;gap:5px}}
+
+.agent-setup { margin-bottom: 1rem; }
+.agent-setup nav { margin-block: 1rem; }
+.setup-steps { padding-inline-start: 1.6rem; max-width: 80ch; }
+.setup-steps li { padding: .3rem 0 .8rem .5rem; }
+.setup-steps h3 { margin: 0 0 .25rem; }
+.setup-command { display:flex; align-items:center; gap:1rem; margin-top:.5rem; }
+.setup-command code { padding:.35rem .65rem; background:var(--surface-2); border:1px solid var(--border); }
+.setup-command button { text-decoration:underline; }

@@ -54,7 +54,7 @@ export function IntegrationsPage() {
   const [tab,setTab]=useState(initial), [search,setSearch]=useState(''), [category,setCategory]=useState<Category|null>(null)
   const [credentials,setCredentials]=useState<string|null>(null)
   const isProviders=location.pathname.endsWith('/providers')
-  const openCredential=credentials ?? (isProviders?'openai':null)
+  const openCredential=credentials ?? (isProviders?(apiTypes.find(id=>id===new URLSearchParams(location.search).get('provider'))||'openai'):null)
   const runtimeInfo=useQuery({queryKey:['runtime-providers'],queryFn:runtime.providers,retry:false})
   const local=useQuery({queryKey:['integration-diagnostics',user.id],queryFn:()=>request<Diagnostics>('/api/local-work/diagnostics'),retry:false})
   const vercel=useQuery({queryKey:['vercel','status'],queryFn:()=>request<{connected:boolean;username?:string}>('/api/vercel/status'),retry:false})
@@ -70,9 +70,9 @@ export function IntegrationsPage() {
     return local.isPending?pending:local.isError?unavailable:value?{label:'Detected',detail:'Local installation'}:{label:'Not installed',tone:'warn'}
   }
   const catalog:Connector[]=[
-    {id:'codex',name:'OpenAI Codex',category:'AI providers',icon:Terminal,text:'Local Codex threads, streaming replies and tool approvals.',doc:'https://developers.openai.com/codex/app-server/',route:'/app/agents',status:agentStatus('codex')},
-    {id:'claude',name:'Claude Agent',category:'AI providers',icon:Asterisk,text:'Project sessions through the Claude Agent SDK.',doc:'https://code.claude.com/docs/en/agent-sdk/overview',route:'/app/agents',status:agentStatus('claude')},
-    {id:'cursor',name:'Cursor',category:'AI providers',icon:SquareTerminal,text:'Native agent sessions through the Cursor CLI and ACP.',doc:'https://cursor.com/docs/cli/acp',route:'/app/agents',status:agentStatus('cursor')},
+    {id:'codex',name:'OpenAI Codex',category:'AI providers',icon:Terminal,text:'Local Codex threads, streaming replies and tool approvals.',doc:'https://developers.openai.com/codex/app-server/',route:'/app/guides?agent=codex',status:agentStatus('codex')},
+    {id:'claude',name:'Claude Agent',category:'AI providers',icon:Asterisk,text:'Project sessions through the Claude Agent SDK.',doc:'https://code.claude.com/docs/en/agent-sdk/overview',route:'/app/guides?agent=claude',status:agentStatus('claude')},
+    {id:'cursor',name:'Cursor',category:'AI providers',icon:SquareTerminal,text:'Native agent sessions through the Cursor CLI and ACP.',doc:'https://cursor.com/docs/cli/acp',route:'/app/guides?agent=cursor',status:agentStatus('cursor')},
     {id:'github',name:'GitHub',category:'Version control',icon:Github,text:'Repositories, pull requests and issues with scoped access.',doc:'https://docs.github.com/en/authentication',route:'/connect',status:local.isPending?pending:local.isError?unavailable:local.data?.github_configured?{label:'Account linked',authorized:true,detail:'@'+user.login,tone:'good'}:required},
     {id:'git',name:'Git',category:'Version control',icon:GitBranch,text:'Local commits, branches and working-tree diffs.',doc:'https://git-scm.com/doc',route:'/app/git',status:localStatus(local.data?.git)},
     {id:'vercel',name:'Vercel',category:'Deployment',icon:Triangle,text:'Inspect deployment logs and review builds before publishing.',doc:'https://vercel.com/docs/rest-api',route:'/app/deployments',status:vercel.isPending?pending:vercel.isError?unavailable:vercel.data?.connected?{label:'Connected',authorized:true,tone:'good',detail:vercel.data.username}:required},

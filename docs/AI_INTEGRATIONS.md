@@ -2,7 +2,13 @@
 
 The Windows app opens a personal workspace with a local account. For development in a browser, run `./start.ps1` and open `http://127.0.0.1:5173/connect`.
 
-## DevPulse AI
+## DevPulse AI hosted service
+
+In the desktop app, link GitHub, open DevPulse AI and send your first message. The hosted service validates the GitHub access token against GitHub on each turn. Only the selected prompt, recent conversation and attached context are forwarded to OpenAI. The owner’s OpenAI key and the Blob credential are read only by the Vercel function. Usage counters are keyed by numeric account ID and UTC date. The shared service allows 12 requests per account and 100 in total per UTC day. Set the provider project budget and billing limits separately.
+
+Hosting the cloud directory requires Vercel, a private Blob store and production variables OPENAI_API_KEY and OPENAI_MODEL. Set OPENAI_API_KEY as Sensitive in Vercel. When rotating it, update the variable and redeploy. HTTP 402 indicates a provider billing or quota problem. HTTP 429 indicates an application or provider rate limit.
+
+## Other assistant modes
 
 Choose **Workspace tools** for supported requests in English or Italian, including “Mostrami i miei progetti”, “Show Git status”, “Show failed deployments” or “Crea un'issue: Correggere la build”. These commands run without model credits. Select a registered project to restrict Git queries. Select a repository when starting a conversation to inspect its open issues and pull requests. An issue draft displays its repository, title and body before you confirm publication.
 

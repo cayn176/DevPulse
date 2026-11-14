@@ -11,7 +11,7 @@ Icon "${ICON}"
 !define MUI_ICON "${ICON}"
 !define MUI_ABORTWARNING
 !define MUI_WELCOMEPAGE_TITLE "Install DevPulse ${VERSION}"
-!define MUI_WELCOMEPAGE_TEXT "Setup will download DevPulse from its official GitHub release and verify the download. On the next screen you can choose the installation folder and shortcuts."
+!define MUI_WELCOMEPAGE_TEXT "Setup will download DevPulse from its official GitHub release and verify the download. On the next screen you can choose the installation folder."
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "English"

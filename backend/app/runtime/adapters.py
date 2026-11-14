@@ -67,7 +67,7 @@ class CodexAdapter(Adapter):
         if not self.rpc or self.rpc.closed or self.rpc.process.returncode is not None:
             self.rpc = JsonRpcProcess([shutil.which("codex"), "app-server", "--listen", "stdio://"], self.on_event)
             await self.rpc.start()
-            result = await self.rpc.request("initialize", {"clientInfo": {"name": "devpulse", "title": "DevPulse", "version": "0.3.0"}, "capabilities": {"experimentalApi": False}})
+            result = await self.rpc.request("initialize", {"clientInfo": {"name": "devpulse", "title": "DevPulse", "version": "0.3.1"}, "capabilities": {"experimentalApi": False}})
             self.version = result.get("userAgent")
             await self.rpc.notify("initialized")
         data = await self.rpc.request("account/read", {"refreshToken": False})
@@ -197,7 +197,7 @@ class CursorAdapter(Adapter):
         if not self.rpc:
             self.rpc = JsonRpcProcess([shutil.which("agent") or shutil.which("cursor-agent"), "acp"], self.on_event)
             await self.rpc.start()
-            result = await self.rpc.request("initialize", {"protocolVersion": 1, "clientInfo": {"name": "devpulse", "version": "0.3.0"}, "clientCapabilities": {"fs": {"readTextFile": False, "writeTextFile": False}, "terminal": False}})
+            result = await self.rpc.request("initialize", {"protocolVersion": 1, "clientInfo": {"name": "devpulse", "version": "0.3.1"}, "clientCapabilities": {"fs": {"readTextFile": False, "writeTextFile": False}, "terminal": False}})
             self.version = result.get("agentInfo", {}).get("version")
             self.agent_capabilities = result.get("agentCapabilities", {})
             self.capabilities.update({"history_import": bool(self.agent_capabilities.get("loadSession")), "models": False, "account": False, "usage": False, "archive": False, "login": True})

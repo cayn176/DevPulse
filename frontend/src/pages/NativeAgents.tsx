@@ -36,7 +36,7 @@ function AgentCard({ provider: p, sessions, models }: { provider: RuntimeProvide
     <div className="quick-links"><Button loading={action.isPending} disabled={!p.installed} onClick={() => action.mutate('verify')}>Verify connection</Button>
     {p.installed && p.id !== 'claude' && p.status !== 'connected' && <Button onClick={() => action.mutate('login')} disabled={action.isPending}>Sign in</Button>}
     {p.status === 'connected' && <><Link to={'/app/conversations?agent='+p.id}>Open chat →</Link><Button onClick={() => action.mutate('disconnect')}>Disconnect</Button></>}
-    <Link to={p.id === 'claude' ? '/app/integrations' : '/app/guides'}>Setup</Link></div>
+    <Link to={'/app/guides?agent='+p.id}>Guida passo passo</Link></div>
     {notice && <p>{notice}</p>}{loginUrl && <a href={loginUrl} target="_blank" rel="noreferrer">Continue official sign-in ↗</a>}
     {action.error && <p role="alert" className="inline-alert">{action.error.message}</p>}
   </Panel>

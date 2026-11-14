@@ -263,3 +263,20 @@ def test_provider_adapter_keeps_key_out_of_prompt(provider, monkeypatch):
     assert response.reply == "Hello"
     assert secret not in str(payloads[0]["body"])
     assert payloads[0]["key"] == secret
+
+
+def test_managed_chat_uses_the_signed_in_account_and_keeps_keys_out_of_history(env, monkeypatch):
+    client, db, user = env
+    response = client.post("/api/ai/threads", json={})
+    endpoint = "/api/ai/threads/" + response.json()["id"] + "/messages"
+    service = AsyncMock(return_value=AIReply(reply="Ready", files=[]))
+    monkeypatch.setattr(ai_api, "managed_answer", service)
+    response = client.post(endpoint, json={"provider": "managed", "text": "Hello"})
+    assert response.status_code == 200
+    assert response.json()["messages"][-1]["text"] == "Ready"
+    assert service.await_args.args[0] == "test-github-token"
+    assert "test-github-token" not in response.text
+    db.query(OAuthConnection).filter_by(user_id=user.id).delete()
+    db.commit()
+    assert client.post(endpoint, json={"provider":"managed","text":"Another turn"}).status_code == 401
+    assert service.await_count == 1

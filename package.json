@@ -1,6 +1,6 @@
 {
   "name": "devpulse-desktop",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "DevPulse unified AI developer workspace",
   "author": "DevPulse contributors",
@@ -12,6 +12,7 @@
     "build:backend": "node scripts/build-backend.cjs",
     "build:desktop": "npm run build:frontend && npm run build:backend && electron-builder --win --x64 --dir --publish never && node scripts/build-installer.cjs",
     "pack:desktop": "npm run build:frontend && npm run build:backend && electron-builder --dir --publish never",
+    "build:store": "node scripts/store-package.cjs",
     "test:desktop": "node --test desktop/security.test.cjs"
   },
   "devDependencies": {
