@@ -4,7 +4,7 @@
 
 **Un workspace desktop per lavorare con progetti locali, agenti AI, GitHub e deployment.** DevPulse 0.3.1 è disponibile per Windows x64. Il backend gira sul PC e conserva le credenziali dei provider cifrate. Puoi iniziare con una cartella locale senza configurare un account.
 
-[Scarica l’installer Windows](https://github.com/cayn176/DevPulse/releases/download/v0.3.1/DevPulse-Setup-0.3.1-x64.exe) · [Pacchetto offline](https://github.com/cayn176/DevPulse/releases/download/v0.3.1/DevPulse-Offline-0.3.1-x64.exe) · [Versione portatile ZIP](https://github.com/cayn176/DevPulse/releases/download/v0.3.1/DevPulse-Portable-0.3.1-x64.zip) · [Release e checksum](https://github.com/cayn176/DevPulse/releases/tag/v0.3.1) · [Preview privata nel browser](https://devpulse-workspace-preview.leafyshark257.chatgpt.site)
+[Scarica l’installer Windows](https://github.com/cayn176/DevPulse/releases/download/v0.3.1/DevPulse-Setup-0.3.1-x64.exe) · [Pacchetto offline](https://github.com/cayn176/DevPulse/releases/download/v0.3.1/DevPulse-Offline-0.3.1-x64.exe) · [Versione portatile ZIP](https://github.com/cayn176/DevPulse/releases/download/v0.3.1/DevPulse-Portable-0.3.1-x64.zip) · [Release e checksum](https://github.com/cayn176/DevPulse/releases/tag/v0.3.1) · [Workspace pubblico su Vercel](https://devpulse-workspace-cayn176.vercel.app)
 
 ## Usare DevPulse dal browser
 
@@ -38,7 +38,7 @@ La preview nel browser contiene un workspace di esempio isolato. Mostra le scher
 
 Nell’app desktop collega GitHub, apri **DevPulse AI** e scrivi il primo messaggio. La chiave OpenAI del servizio è custodita nel progetto Vercel del gestore. Il servizio verifica il token GitHub con GitHub e invia il messaggio, la cronologia recente e l’eventuale contesto allegato a OpenAI. Il gestore deve mantenere attiva la fatturazione del progetto OpenAI.
 
-In **Integration guides** scegli Codex, Claude Agent o Cursor. Segui i quattro passaggi e usa **Verifica** prima di aprire la conversazione. Le guide sono consultabili anche nella [preview](https://devpulse-workspace-preview.leafyshark257.chatgpt.site/#/app/guides?agent=codex).
+In **Integration guides** scegli Codex, Claude Agent o Cursor. Segui i quattro passaggi e usa **Verifica** prima di aprire la conversazione. Le guide sono consultabili anche nella [preview](https://devpulse-workspace-cayn176.vercel.app/#/app/guides?agent=codex).
 
 ## Configurare gli strumenti
 

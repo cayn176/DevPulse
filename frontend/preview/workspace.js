@@ -61,6 +61,20 @@
   }
   const native=window.fetch.bind(window)
   window.fetch=async(input,init={})=>{const u=new URL(input instanceof Request?input.url:input,location.href);if(u.origin===location.origin&&/^\/(api|auth)\//.test(u.pathname)){let b={};try{b=JSON.parse(init.body||'{}')}catch{}return route(u,init.method||'GET',b)}return native(input,init)}
+  if (!location.hash && /^\/app(?:\/|$)/.test(location.pathname)) {
+    history.replaceState(null, '', '/#' + location.pathname + location.search)
+  }
   if(!location.hash.startsWith('#/app'))location.hash='/app'
-  const label=document.createElement('div');label.className='preview-label';label.textContent='Interactive preview · Sample workspace · Changes saved in this browser';document.body.append(label)
+  const label = document.createElement('div')
+  label.className = 'preview-label'
+  const mode = document.createElement('span')
+  mode.textContent = 'Workspace di esempio'
+  label.append(mode)
+  for (const [text, url] of [['Chat AI', 'https://devpulse-ai-cayn176.vercel.app/'], ['Scarica per Windows', 'https://github.com/cayn176/DevPulse/releases/latest']]) {
+    const link = document.createElement('a')
+    link.href = url
+    link.textContent = text
+    label.append(link)
+  }
+  document.body.append(label)
 })()

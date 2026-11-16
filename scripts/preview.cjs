@@ -8,5 +8,5 @@ const build=spawnSync(process.execPath,[path.join(front,'node_modules/vite/bin/v
 if(build.status!==0)process.exit(build.status||1);
 fs.copyFileSync(path.join(front,'preview/workspace.js'),path.join(output,'preview-workspace.js'));
 let html=fs.readFileSync(path.join(output,'index.html'),'utf8');
-html=html.replace('</body>', '<style>.preview-label{position:fixed;bottom:0;left:0;right:0;z-index:65;text-align:center;background:#1c3548;color:#e3efff;font:11px/22px system-ui;pointer-events:none}body{padding-bottom:22px}</style><script src="/preview-workspace.js"></script></body>');
+html=html.replace('</body>', '<style>.preview-label{position:fixed;bottom:0;left:0;right:0;z-index:65;text-align:center;background:#1c3548;color:#e3efff;font:11px/22px system-ui;display:flex;justify-content:center;gap:1rem}.preview-label a{color:inherit;text-decoration:underline}body{padding-bottom:22px}</style><script src="/preview-workspace.js"></script></body>');
 fs.writeFileSync(path.join(output,'index.html'),html);

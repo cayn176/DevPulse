@@ -1,0 +1,14 @@
+.git
+**/.env*
+**/node_modules
+**/.venv
+**/__pycache__
+backend
+cloud
+desktop
+release
+preview-dist
+frontend/dist
+frontend/.cache
+docs
+*.log

@@ -1,0 +1,52 @@
+{
+  "framework": null,
+  "buildCommand": "node scripts/preview.cjs",
+  "installCommand": "npm ci --prefix frontend",
+  "outputDirectory": "preview-dist",
+  "redirects": [
+    {
+      "source": "/chat",
+      "destination": "https://devpulse-ai-cayn176.vercel.app/",
+      "permanent": false
+    },
+    {
+      "source": "/download",
+      "destination": "https://github.com/cayn176/DevPulse/releases/latest",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/app",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/:path*",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
